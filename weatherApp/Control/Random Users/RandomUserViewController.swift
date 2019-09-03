@@ -9,22 +9,59 @@
 import UIKit
 
 class RandomUserViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+    
+    @IBOutlet weak var randomUserTableView: UITableView!
+    
+    var randomUsers = [Results]() {
+        didSet {
+            randomUserTableView.reloadData()
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureTableView()
+        loadData()
     }
-    */
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let destination = segue.destination as? RandomUserDVC,
+            let indexPath = randomUserTableView.indexPathForSelectedRow else {return}
+        let selectedUser = randomUsers[indexPath.row]
+        destination.users = selectedUser
+    }
+    
+    private func configureTableView() {
+        randomUserTableView.delegate = self
+        randomUserTableView.dataSource = self
+    }
+    
+    private func loadData() {
+        guard let pathToData = Bundle.main.path(forResource: "randomUser", ofType: "json") else {fatalError("randomUser.json file not found")}
+        let internalUrl = URL(fileURLWithPath: pathToData)
+        do {
+            let data = try Data(contentsOf: internalUrl)
+            let usersFroMJSON = try RandomUser.getUser(from: data)
+            randomUsers = usersFroMJSON
+        } catch {
+            fatalError("an error occured: \(error)")
+        }
+    }
+}
 
+extension RandomUserViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return randomUsers.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let user = randomUsers[indexPath.row]
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "userCell", for: indexPath)
+        cell.textLabel?.text = "\(user.name.last), \(user.name.first)"
+        cell.detailTextLabel?.text = user.email
+        return cell
+    }
+    
+    
 }

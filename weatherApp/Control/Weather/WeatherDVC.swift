@@ -10,21 +10,25 @@ import UIKit
 
 class WeatherDVC: UIViewController {
 
+    @IBOutlet weak var currentTempLabel: UILabel!
+    @IBOutlet weak var weatherLabel: UILabel!
+    
+    var list: ListInfo!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        configureDVC()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func configureDVC () {
+        currentTempLabel.text = "Current Temperature: \(list.main.temp)"
+        //calling the model, we're going into the array and checking to see if anything exists inside
+        //this spec api gives an array of one object in weather
+        guard let weather = list.weather.first else {return}
+            
+        weatherLabel.text = "Current Weather: \(weather.description)"
+        
     }
-    */
+  
 
 }

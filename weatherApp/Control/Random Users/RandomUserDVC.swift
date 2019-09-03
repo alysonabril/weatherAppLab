@@ -9,22 +9,23 @@
 import UIKit
 
 class RandomUserDVC: UIViewController {
-
+    
+    @IBOutlet weak var addressLabel: UILabel!
+    @IBOutlet weak var phoneLabel: UILabel!
+    @IBOutlet weak var dobLabel: UILabel!
+    
+    var users: Results!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        uploadUserInfo()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func uploadUserInfo() {
+        let location = users.location
+        addressLabel.text = "\(location.street); \n\(location.city), \(location.state)"
+        phoneLabel.text = users.phone
+        dobLabel.text = "\(users.dob)"
+        
     }
-    */
-
+    
 }
